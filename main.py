@@ -1,26 +1,50 @@
+#!/usr/bin/env python3
+
 import argparse
-from docker_manager import DockerManager  # Make sure docker_manager.py is in the same directory
+import logging
+import json
+from docker_manager import DockerManager  
+
+def setup_logging():
+    logHandler = logging.FileHandler("logfile.txt")
+    logger = logging.getLogger()
+    logger.addHandler(logHandler)
+    logger.setLevel(logging.INFO)
+
+def json_log(message, level="INFO"):
+    log_entry = json.dumps({"level": level, "message": message})
+    if level == "INFO":
+        logging.info(log_entry)
+    elif level == "ERROR":
+        logging.error(log_entry)
 
 def rollback_image(container_name, target_image, force=False):
     docker_manager = DockerManager()
 
+    if not docker_manager.image_exists(target_image):
+        json_log(f"Target image {target_image} not found. Aborting rollback.", level="ERROR")
+        return
+
+    user_input = input(f"Are you sure you want to stop and remove the container {container_name}? (y/n): ")
+    if user_input.lower() != 'y' and not force:
+        json_log("Operation cancelled by the user.")
+        return
+
     if docker_manager.stop_and_remove_container(container_name) or force:
-        print(f"Stopped and removed container {container_name}")
+        json_log(f"Stopped and removed container {container_name}")
     else:
-        print(f"Container {container_name} not found. Will attempt to start new container.")
+        json_log(f"Container {container_name} not found. Will attempt to start new container.")
 
     if docker_manager.start_new_container(container_name, target_image):
-        print(f"Started new container {container_name} with image {target_image}")
+        json_log(f"Started new container {container_name} with image {target_image}")
     else:
-        print(f"Failed to start new container {container_name} with image {target_image}")
+        json_log(f"Failed to start new container {container_name} with image {target_image}", level="ERROR")
 
 if __name__ == "__main__":
+    setup_logging()
     parser = argparse.ArgumentParser(description="Docker image rollback tool")
-
     parser.add_argument("container_name", type=str, help="Name of the container to rollback")
     parser.add_argument("target_image", type=str, help="Target image to rollback to")
     parser.add_argument("--force", action="store_true", help="Forcefully stop and remove running containers")
-
     args = parser.parse_args()
-
     rollback_image(args.container_name, args.target_image, force=args.force)
