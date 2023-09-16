@@ -28,3 +28,7 @@
 
 ```source rolypoly/bin/activate```
 ```pip install . --use-pep517```
+
+## Use
+
+```python main.py test-nginx nginx:1.17 --preserve-volumes```

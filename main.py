@@ -46,6 +46,8 @@ def rollback_image(container_name, target_image, force=False, preserve_volumes=F
     if preserve_volumes:
         volume_mounts = docker_manager.get_container_volume_details(container_name)
 
+    port_mappings = docker_manager.get_container_port_mappings(container_name)
+
     # 2
     if force:
         if docker_manager.stop_and_remove_container(container_name):
@@ -69,7 +71,7 @@ def rollback_image(container_name, target_image, force=False, preserve_volumes=F
         return
 
     # 4
-    if docker_manager.start_new_container(container_name, target_image, volume_mounts, env_vars):
+    if docker_manager.start_new_container(container_name, target_image, volume_mounts, env_vars, port_mappings):
         json_log(f"Started new container {container_name} with image {target_image}")
     else:
         json_log(f"Failed to start new container {container_name} with image {target_image}", level="ERROR")

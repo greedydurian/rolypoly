@@ -26,3 +26,39 @@ Container test-nginx not found
 {"level": "ERROR", "message": "Failed to stop and remove container test-nginx."}
 Successfully started new container test-nginx with image nginx:1.17
 {"level": "INFO", "message": "Started new container test-nginx with image nginx:1.17"}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Forcefully stopped and removed container test-nginx"}
+Successfully started new container test-nginx with image nginx:1.17
+{"level": "INFO", "message": "Started new container test-nginx with image nginx:1.17"}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Forcefully stopped and removed container test-nginx"}
+Successfully started new container test-nginx with image nginx:1.17
+{"level": "INFO", "message": "Started new container test-nginx with image nginx:1.17"}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Stopped and removed container test-nginx"}
+{"level": "ERROR", "message": "Target image non_existent_image not found. Aborting rollback."}
+Container @#$%^ not found. Unable to fetch environment variables.
+Container @#$%^ not found
+{"level": "ERROR", "message": "Failed to stop and remove container @#$%^."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to forcefully stop and remove container test-nginx."}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Stopped and removed container test-nginx"}
+Successfully started new container test-nginx with image nginx:1.17
+{"level": "INFO", "message": "Started new container test-nginx with image nginx:1.17"}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Forcefully stopped and removed container test-nginx"}
+Successfully started new container test-nginx with image hello-nginx:1.0
+{"level": "INFO", "message": "Started new container test-nginx with image hello-nginx:1.0"}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Forcefully stopped and removed container test-nginx"}
+{"level": "ERROR", "message": "Target image hello-nginx:1.0 not found. Aborting rollback."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found. Unable to fetch port mappings.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to forcefully stop and remove container test-nginx."}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Forcefully stopped and removed container test-nginx"}
+Successfully started new container test-nginx with image test-nginx:1.0
+{"level": "INFO", "message": "Started new container test-nginx with image test-nginx:1.0"}

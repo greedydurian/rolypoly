@@ -21,6 +21,22 @@ class DockerManager:
                 print(f"Failed to pull {image_name}: {e}")
                 return False
 
+    def get_container_port_mappings(self, container_name):
+        """
+        Retrieve the port mappings for a given container.
+
+        :param container_name: Name of the container to inspect.
+        :return: A dictionary of port mappings if the container exists, an empty dictionary otherwise.
+        """
+        try:
+            container = self.client.containers.get(container_name)
+            host_config = container.attrs.get('HostConfig', {})
+            port_bindings = host_config.get('PortBindings', {})
+            return port_bindings
+        except docker.errors.NotFound:
+            logging.warning(f"Container {container_name} not found. Unable to fetch port mappings.")
+            return {}
+
 
     def stop_and_remove_container(self, container_name, timeout=10):
         try:
@@ -46,7 +62,7 @@ class DockerManager:
             logging.warning(f"Container {container_name} not found")
             return False
 
-    def start_new_container(self, container_name, image, volume_mounts=[], env_vars=[]):
+    def start_new_container(self, container_name, image, volume_mounts=[], env_vars=[], port_mappings={}):
         """
         Starts a new container with the given image and name 
         :param container_name: Name of the container to start
@@ -60,7 +76,8 @@ class DockerManager:
                 name=container_name, 
                 detach=True, 
                 mounts=volume_mounts, 
-                environment=env_vars
+                environment=env_vars,
+                ports=port_mappings 
             )
             logging.info(f"Successfully started new container {container_name} with image {image}")
             return True
