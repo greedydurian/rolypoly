@@ -10,7 +10,7 @@ def setup_logging():
     logger = logging.getLogger()
     logger.addHandler(logHandler)
     logger.setLevel(logging.INFO)
-    
+
     ## logs into console
     console_handler = logging.StreamHandler()
     logger.addHandler(console_handler)
@@ -23,27 +23,53 @@ def json_log(message, level="INFO"):
         logging.error(log_entry)
 
 def rollback_image(container_name, target_image, force=False, preserve_volumes=False):
+    """
+    Rolling back image yoooo 
+
+    :param container_name: name of the container to inspect.
+    :param target_image: image to which the container should be rolled back
+    :param force: default False. if True, forcefully stop and remove running containers 
+    :param preserve_volumes: default False. if True, the volumes from the original container will be re-attached to the new container
+
+    logical sequence: 
+    (1) fetch existing environment  
+    (2) stop and remove the existing container
+    (3) validate the target image exists 
+    (4) start the new container with the target image
+
+    """
     docker_manager = DockerManager()
 
-    if not docker_manager.image_exists(target_image):
-        json_log(f"Target image {target_image} not found. Aborting rollback.", level="ERROR")
-        return
-
+    # 1
+    env_vars = docker_manager.get_container_env_variables(container_name)
     volume_mounts = []
     if preserve_volumes:
         volume_mounts = docker_manager.get_container_volume_details(container_name)
 
-    user_input = input(f"Are you sure you want to stop and remove the container {container_name}? (y/n): ")
-    if user_input.lower() != 'y' and not force:
-        json_log("Operation cancelled by the user.")
+    # 2
+    if force:
+        if docker_manager.stop_and_remove_container(container_name):
+            json_log(f"Forcefully stopped and removed container {container_name}")
+        else:
+            json_log(f"Failed to forcefully stop and remove container {container_name}.", level="ERROR")
+            return
+    else:
+        user_input = input(f"Are you sure you want to stop and remove the container {container_name}? (y/n): ")
+        if user_input.lower() == 'y':
+            if docker_manager.stop_and_remove_container(container_name):
+                json_log(f"Stopped and removed container {container_name}")
+            else:
+                json_log(f"Failed to stop and remove container {container_name}.", level="ERROR")
+        else:
+            json_log("Operation cancelled by the user.")
+
+    # 3
+    if not docker_manager.image_exists(target_image):
+        json_log(f"Target image {target_image} not found. Aborting rollback.", level="ERROR")
         return
 
-    if docker_manager.stop_and_remove_container(container_name) or force:
-        json_log(f"Stopped and removed container {container_name}")
-    else:
-        json_log(f"Container {container_name} not found. Will attempt to start new container.")
-
-    if docker_manager.start_new_container(container_name, target_image, volume_mounts):
+    # 4
+    if docker_manager.start_new_container(container_name, target_image, volume_mounts, env_vars):
         json_log(f"Started new container {container_name} with image {target_image}")
     else:
         json_log(f"Failed to start new container {container_name} with image {target_image}", level="ERROR")

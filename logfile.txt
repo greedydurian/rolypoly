@@ -1,0 +1,28 @@
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Stopped and removed container test-nginx"}
+{"level": "ERROR", "message": "Target image nginx:1.17 not found. Aborting rollback."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to stop and remove container test-nginx. Attempting forceful removal."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to stop and remove container test-nginx. Attempting forceful removal."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to stop and remove container test-nginx. Attempting forceful removal."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to stop and remove container test-nginx."}
+{"level": "ERROR", "message": "Target image nginx:1.17 not found. Aborting rollback."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to stop and remove container test-nginx."}
+{"level": "ERROR", "message": "Target image nginx:1.17 not found. Aborting rollback."}
+Successfully stopped and removed container test-nginx
+{"level": "INFO", "message": "Stopped and removed container test-nginx"}
+{"level": "ERROR", "message": "Target image nginx:1.17 not found. Aborting rollback."}
+Container test-nginx not found. Unable to fetch environment variables.
+Container test-nginx not found
+{"level": "ERROR", "message": "Failed to stop and remove container test-nginx."}
+Successfully started new container test-nginx with image nginx:1.17
+{"level": "INFO", "message": "Started new container test-nginx with image nginx:1.17"}

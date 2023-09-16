@@ -1,15 +1,15 @@
 ## Structure
 ```
-rolypoly/
-├─ docker_manager.py
-├─ main.py
-├─ tests/
-│  ├─ test_docker_manager.py
-│  ├─ __init__.py
-├─ .gitignore
-├─ package.json
-├─ README.md
-
+└── RolyPoly
+    ├── rolypoly
+    │   ├── bin
+    │   ├── include
+    │   └── pyvenv.cfg
+    ├── tests
+    │   └── test_docker_manager.py
+    ├── docker_manager.py
+    ├── main.py
+    └── setup.py
 ```
 
 ## Run unit tests
@@ -25,3 +25,6 @@ rolypoly/
 {"level": "INFO", "message": "Started new container container_test with image image_test"}
 {"level": "ERROR", "message": "Failed to start new container container_test with image image_test"}
 ```
+
+```source rolypoly/bin/activate```
+```pip install . --use-pep517```

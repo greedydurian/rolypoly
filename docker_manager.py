@@ -1,5 +1,6 @@
 import docker
 import logging
+import time
 
 class DockerManager:
     def __init__(self, client=None):
@@ -11,12 +12,33 @@ class DockerManager:
             self.client.images.get(image_name)
             return True
         except docker.errors.ImageNotFound:
-            return False
+            print(f"Image {image_name} not found in local Docker images. Attempting to pull...")
+            try:
+                self.client.images.pull(image_name)
+                print(f"Successfully pulled {image_name}")
+                return True
+            except Exception as e:
+                print(f"Failed to pull {image_name}: {e}")
+                return False
 
-    def stop_and_remove_container(self, container_name):
+
+    def stop_and_remove_container(self, container_name, timeout=10):
         try:
             container = self.client.containers.get(container_name)
-            container.stop()
+            
+            # Attempt graceful shutdown first
+            container.kill(signal="SIGTERM")  
+            
+            start_time = time.time()
+            while time.time() - start_time < timeout:
+                if container.status == 'exited':
+                    break
+                time.sleep(1)
+            
+            # Fallback to forceful shutdown if container is still running
+            if container.status != 'exited':
+                container.stop()
+            
             container.remove()
             logging.info(f"Successfully stopped and removed container {container_name}")
             return True
@@ -24,7 +46,7 @@ class DockerManager:
             logging.warning(f"Container {container_name} not found")
             return False
 
-    def start_new_container(self, container_name, image, volume_mounts=[]):
+    def start_new_container(self, container_name, image, volume_mounts=[], env_vars=[]):
         """
         Starts a new container with the given image and name 
         :param container_name: Name of the container to start
@@ -33,7 +55,13 @@ class DockerManager:
         :return: True if the container starts successfully, False otherwise
         """
         try:
-            new_container = self.client.containers.run(image, name=container_name, detach=True, mounts=volume_mounts)
+            new_container = self.client.containers.run(
+                image, 
+                name=container_name, 
+                detach=True, 
+                mounts=volume_mounts, 
+                environment=env_vars
+            )
             logging.info(f"Successfully started new container {container_name} with image {image}")
             return True
         except docker.errors.ImageNotFound:
@@ -53,7 +81,18 @@ class DockerManager:
         """
         try:
             container = self.client.containers.get(container_name)
-            volume_mounts = container.attrs['HostConfig']['Mounts']
+            host_config = container.attrs.get('HostConfig', {})
+            volume_mounts = host_config.get('Mounts', [])
+            print(container.attrs['HostConfig'])
+
             return volume_mounts
         except docker.errors.NotFound:
+            return []
+        
+    def get_container_env_variables(self, container_name):
+        try:
+            container = self.client.containers.get(container_name)
+            return container.attrs['Config']['Env']
+        except docker.errors.NotFound:
+            logging.warning(f"Container {container_name} not found. Unable to fetch environment variables.")
             return []
