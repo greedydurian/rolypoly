@@ -5,15 +5,10 @@
     │   ├── bin
     │   ├── include
     │   └── pyvenv.cfg
-    ├── tests
-    │   └── test_docker_manager.py
     ├── docker_manager.py
     ├── main.py
     └── setup.py
 ```
-
-## Run unit tests
-```python -m unittest tests/test_docker_manager.py```
 
 ## Features
 
@@ -26,9 +21,22 @@
 {"level": "ERROR", "message": "Failed to start new container container_test with image image_test"}
 ```
 
-```source rolypoly/bin/activate```
-```pip install . --use-pep517```
-
 ## Use
 
-```python main.py test-nginx nginx:1.17 --preserve-volumes```
+This will rollback your image to whichever image you have chosen:
+
+```rolypoly my-container my-image  --preserve-volumes```
+
+Params:
+my-container: container that you ran in your docker
+
+my-image: target image that you want to rollback to
+
+preserve-volumes: preserve volume during rollback
+
+
+Example: ```rolypoly test-nginx nginx:1.17 --preserve-volumes```
+
+If you want to force the container to stop immediately, you can use the flags below: 
+
+```rolypoly test-nginx nginx:1.17 --force --preserve-volumes```
