@@ -1,4 +1,5 @@
 pyproject.toml
+setup.cfg
 setup.py
 rolypoly.egg-info/PKG-INFO
 rolypoly.egg-info/SOURCES.txt
